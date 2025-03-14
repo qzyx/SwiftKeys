@@ -44,7 +44,7 @@ export default function MobileTestSettingsForm({ setIsOpen, isOpen }) {
   return (
     <div
       ref={node}
-      className={`z-10 inser-0 h-3/4 w-72 bg-secondary ${animationClass} border-primary border-l-2 border-t-2 border-b-2 fixed top-[50%] translate-y-[-50%] right-0 rounded-l-xl flex flex-col items-center`}
+      className={`z-10 inser-0  w-72 bg-secondary ${animationClass} border-primary border-l-2 border-t-2 border-b-2 fixed top-[50%] translate-y-[-50%] right-0 rounded-l-xl flex flex-col items-center`}
       onClick={(e) => e.stopPropagation()}
     >
       <div className="flex justify-between w-full font-karantina text-2xl px-4 py-2 rounded-t-xl text-primary">
@@ -85,7 +85,7 @@ export default function MobileTestSettingsForm({ setIsOpen, isOpen }) {
         <button className="w-25 cursor-pointer  transition-all duration-150 py-2 rounded-full bg-secondary hover:w-27 border-background border flex items-center justify-center gap-3">
           40
         </button>
-        <div className="mt-10">
+        <div className="my-10">
           <button className="w-30 cursor-pointer  transition-all duration-150 py-2 rounded-full bg-secondary  border-background border flex items-center justify-center gap-2 font-karantina text-2xl hover:bg-background hover:text-primary">
             Custom <Settings2></Settings2>
           </button>
