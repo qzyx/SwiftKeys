@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #1d1d1d;
+  --color-primary: #adb2d4;
+  --color-secondary: #494949;
+  --color-tertiary: #d9d9d9;
+  --font-karantina: "Karantina", sans-serif;
+}
+body {
+  background-color: var(--color-background);
+  min-height: 100vh;
+}
