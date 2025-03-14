@@ -6,8 +6,29 @@
   --color-secondary: #494949;
   --color-tertiary: #d9d9d9;
   --font-karantina: "Karantina", sans-serif;
+
+  --animate-slide-in: slide-in 0.5s ease-in-out;
+  --animate-slide-out: slide-out 0.5s ease-in-out;
+  @keyframes slide-in {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slide-out {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
 }
 body {
   background-color: var(--color-background);
   min-height: 100vh;
+  overflow-x: hidden;
 }
