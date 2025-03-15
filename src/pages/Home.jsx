@@ -1,6 +1,6 @@
-import RetryBtn from "./RetryBtn";
-import Test from "./Test";
-import TestSettings from "./TestSettings";
+import RetryBtn from "../components/RetryBtn";
+import Test from "../components/Test";
+import TestSettings from "../components/TestSettings";
 
 export default function Home() {
   return (

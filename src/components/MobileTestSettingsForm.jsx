@@ -53,7 +53,7 @@ export default function MobileTestSettingsForm({ setIsOpen, isOpen }) {
             e.stopPropagation();
             handleClose();
           }}
-          className="cursor-pointer"
+          className="button"
         >
           <X></X>
         </button>
@@ -64,29 +64,30 @@ export default function MobileTestSettingsForm({ setIsOpen, isOpen }) {
           Words
           <RectangleEllipsis></RectangleEllipsis>
         </button>
-        <button className="w-25 cursor-pointer hover:shadow-xl hover:scale-105 transition-all duration-150 py-2 rounded-full bg-secondary shadow-md border-background border flex items-center justify-center gap-3">
+        <button className="w-25 button hover:shadow-xl hover:scale-105 transition-all duration-150 py-2 rounded-full bg-secondary shadow-md border-background border flex items-center justify-center gap-3">
           Time
           <Timer></Timer>
         </button>
       </div>
+
       <div className="mt-4 flex flex-col gap-2 items-center text-tertiary">
-        <button className="w-25 cursor-pointer  transition-all duration-250 py-2 rounded-full bg-secondary hover:w-27  border-background border flex items-center justify-center gap-3">
+        <button className="w-25 button  transition-all duration-250 py-2 rounded-full bg-secondary hover:w-27  border-background border flex items-center justify-center gap-3">
           5
         </button>
-        <button className="w-25 cursor-pointer  transition-all duration-150 py-2 rounded-full bg-background   border-background border flex items-center justify-center gap-3 ">
+        <button className="w-25 button  transition-all duration-150 py-2 rounded-full bg-background   border-background border flex items-center justify-center gap-3 ">
           10
         </button>
-        <button className="w-25 cursor-pointer  transition-all duration-150 py-2 rounded-full bg-secondary  hover:w-27 border-background border flex items-center justify-center gap-3">
+        <button className="w-25 button  transition-all duration-150 py-2 rounded-full bg-secondary  hover:w-27 border-background border flex items-center justify-center gap-3">
           20
         </button>
-        <button className="w-25 cursor-pointer  transition-all duration-150 py-2 rounded-full bg-secondary  hover:w-27 border-background border flex items-center justify-center gap-3">
+        <button className="w-25 button  transition-all duration-150 py-2 rounded-full bg-secondary  hover:w-27 border-background border flex items-center justify-center gap-3">
           30
         </button>
-        <button className="w-25 cursor-pointer  transition-all duration-150 py-2 rounded-full bg-secondary hover:w-27 border-background border flex items-center justify-center gap-3">
+        <button className="w-25 button  transition-all duration-150 py-2 rounded-full bg-secondary hover:w-27 border-background border flex items-center justify-center gap-3">
           40
         </button>
         <div className="my-10">
-          <button className="w-30 cursor-pointer  transition-all duration-150 py-2 rounded-full bg-secondary  border-background border flex items-center justify-center gap-2 font-karantina text-2xl hover:bg-background hover:text-primary">
+          <button className="w-30 button  transition-all duration-150 py-2 rounded-full bg-secondary  border-background border flex items-center justify-center gap-2 font-karantina text-2xl hover:bg-background hover:text-primary">
             Custom <Settings2></Settings2>
           </button>
         </div>
