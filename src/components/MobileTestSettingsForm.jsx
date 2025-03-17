@@ -67,37 +67,41 @@ export default function MobileTestSettingsForm({
         </button>
         <span className="text-xl">Test Settings</span>
       </div>
-      <div className="flex flex-col gap-4 items-center mt-4 text-primary font-karantina text-2xl w-full shadow-md pb-8">
-        <button
-          onClick={() => dispatch(setOption("words"))}
-          className={`w-25 py-2 rounded-full shadow-md border-background border flex items-center justify-center gap-3 ${
-            option === "words"
-              ? "bg-primary text-secondary"
-              : "bg-secondary hover:shadow-xl hover:scale-105 transition-all duration-150"
-          }`}
-        >
-          Words
-          <RectangleEllipsis></RectangleEllipsis>
-        </button>
-        <button
-          onClick={() => dispatch(setOption("time"))}
-          className={`w-25 button py-2 rounded-full shadow-md border-background border flex items-center justify-center gap-3 ${
-            option === "time"
-              ? "bg-primary text-secondary"
-              : "bg-secondary hover:shadow-xl hover:scale-105 transition-all duration-150"
-          }`}
-        >
-          Time
-          <Timer></Timer>
-        </button>
+
+      {/* Enhanced Words/Time toggle section */}
+      <div className="flex flex-col items-center mt-6 w-full px-4">
+        <div className="flex bg-background/30 rounded-full p-1 gap-1 w-full">
+          <button
+            onClick={() => dispatch(setOption("words"))}
+            className={`flex-1 py-2 rounded-full flex items-center justify-center gap-2 transition-all duration-200 ${
+              option === "words"
+                ? "bg-primary text-secondary shadow-md font-medium"
+                : "text-primary hover:bg-tertiary/10"
+            }`}
+          >
+            Words
+            <RectangleEllipsis size={18} />
+          </button>
+          <button
+            onClick={() => dispatch(setOption("time"))}
+            className={`flex-1 py-2 rounded-full flex items-center justify-center gap-2 transition-all duration-200 ${
+              option === "time"
+                ? "bg-primary text-secondary shadow-md font-medium"
+                : "text-primary hover:bg-tertiary/10"
+            }`}
+          >
+            Time
+            <Timer size={18} />
+          </button>
+        </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-2 items-center text-tertiary">
+      <div className="mt-6 flex flex-col gap-3 items-center text-tertiary w-full px-4">
         {[5, 10, 20, 30, 40].map((num) => (
           <button
             onClick={() => dispatch(setCount(num))}
             key={num}
-            className={`w-25 transition-all duration-250 py-2 rounded-full   border-background border flex items-center justify-center gap-3 ${
+            className={`w-full transition-all duration-250 py-2 rounded-full border-background border flex items-center justify-center gap-3 ${
               count === num
                 ? "bg-primary text-secondary"
                 : "bg-secondary hover:shadow-xl hover:scale-105 transition-all duration-150 cursor-pointer"
@@ -106,9 +110,9 @@ export default function MobileTestSettingsForm({
             {num}
           </button>
         ))}
-        <div className="my-10">
-          <button className="w-30 button  transition-all duration-150 py-2 rounded-full bg-secondary  border-background border flex items-center justify-center gap-2 font-karantina text-2xl hover:bg-background hover:text-primary">
-            Custom <Settings2></Settings2>
+        <div className="my-6">
+          <button className="w-full transition-all duration-150 py-2 rounded-full bg-secondary border-background border flex items-center justify-center gap-2 font-karantina text-2xl hover:bg-background hover:text-primary px-6">
+            Custom <Settings2 size={20} />
           </button>
         </div>
       </div>

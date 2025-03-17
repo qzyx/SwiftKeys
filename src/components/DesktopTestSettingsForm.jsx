@@ -10,23 +10,23 @@ function DesktopTestSettingsForm({ count, option }) {
       {/* Desktop settings bar */}
       <div className="relative w-auto max-w-3xl shadow-md justify-between h-16 hidden items-center rounded-lg bg-secondary md:flex px-6 text-tertiary border border-tertiary/30">
         {/* Words/Time toggle */}
-        <div className="flex items-center gap-3 font-karantina text-xl">
+        <div className="flex items-center gap-1 p-1 bg-background/20 rounded-full font-karantina text-xl">
           <button
             onClick={() => dispatch(setOption("words"))}
-            className={`button = rounded-full border border-tertiary px-4 py-1.5 transition-colors ${
+            className={`button rounded-full px-5 py-1.5 transition-all duration-200 ${
               option === "words"
-                ? "bg-primary text-secondary"
-                : "bg-secondary hover:shadow-xl hover:scale-105 transition-all duration-150"
+                ? "bg-primary text-secondary shadow-lg"
+                : "hover:bg-tertiary/20"
             }`}
           >
             Words
           </button>
           <button
             onClick={() => dispatch(setOption("time"))}
-            className={`button = rounded-full border border-tertiary px-4 py-1.5 transition-colors ${
+            className={`button rounded-full px-5 py-1.5 transition-all duration-200 ${
               option === "time"
-                ? "bg-primary text-secondary"
-                : "bg-secondary hover:shadow-xl hover:scale-105 transition-all duration-150"
+                ? "bg-primary text-secondary shadow-lg"
+                : "hover:bg-tertiary/20"
             }`}
           >
             Time
