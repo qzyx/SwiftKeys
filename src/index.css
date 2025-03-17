@@ -1,10 +1,16 @@
 @import "tailwindcss";
-
-@theme {
+:root {
   --color-background: #1d1d1d;
   --color-primary: #adb2d4;
   --color-secondary: #494949;
   --color-tertiary: #d9d9d9;
+}
+@theme {
+  --color-background: var(--color-background);
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-tertiary: var(--color-tertiary);
+
   --font-karantina: "Karantina", sans-serif;
 
   --animate-slide-in: slide-in 0.5s ease-in-out;

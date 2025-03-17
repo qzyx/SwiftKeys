@@ -1,16 +1,17 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import ThemeCard from "./ThemeCard";
 import { themes } from "../assets/themes/themes";
 import { useDispatch } from "react-redux";
+import { setTheme } from "../features/Settings/SettingsSlice";
 
 export default function ThemeSelector() {
   // Sample themes array - replace with your actual themes
-
+  const dispatch = useDispatch();
   const [activeTheme, setActiveTheme] = useState("Default");
 
   const handleThemeSelect = (theme) => {
     setActiveTheme(theme.name);
-    useDispatch({ type: "settings/setTheme", payload: theme.name });
+    dispatch(setTheme(theme.name));
     // Add your theme changing logic here
     console.log(`Theme selected: ${theme.name}`);
   };
