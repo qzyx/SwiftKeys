@@ -1,27 +1,10 @@
 @import "tailwindcss";
-:root {
+
+@theme {
   --color-background: #1d1d1d;
   --color-primary: #adb2d4;
   --color-secondary: #494949;
   --color-tertiary: #d9d9d9;
-}
-/* Remove number input spinner globally */
-input[type="number"] {
-  -moz-appearance: textfield; /* Firefox */
-}
-
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none; /* Chrome, Safari, Edge */
-  margin: 0;
-}
-
-@theme {
-  --color-background: var(--color-background);
-  --color-primary: var(--color-primary);
-  --color-secondary: var(--color-secondary);
-  --color-tertiary: var(--color-tertiary);
-
   --font-karantina: "Karantina", sans-serif;
 
   --animate-slide-in: slide-in 0.5s ease-in-out;
@@ -91,14 +74,4 @@ body {
   to {
     transform: translate(-50%, -50%) rotate(360deg);
   }
-}
-
-/* Theme preview styles */
-.theme-preview {
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
-}
-
-.theme-preview:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }

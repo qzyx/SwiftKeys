@@ -6,7 +6,7 @@ export const settingsSlice = createSlice({
     theme: "Default",
     quick_start: "tab",
     max_line_width: 80,
-    font_size: 16,
+    font_size: "md",
     smooth_scrolling: false,
   },
   reducers: {

@@ -5,6 +5,7 @@ import TestSettings from "../components/TestSettings";
 import useSettings from "../hooks/useSettings";
 
 export default function Home() {
+  const max_line_width = useSelector((state) => state.settings.max_line_width);
   const theme = useSettings();
 
   return (
@@ -12,7 +13,7 @@ export default function Home() {
       <div>
         <TestSettings></TestSettings>
       </div>
-      <div className="flex justify-center w-full  ">
+      <div className={`flex justify-center max-w-[${max_line_width}%] `}>
         <Test></Test>
       </div>
       <div>

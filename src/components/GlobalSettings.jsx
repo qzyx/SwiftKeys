@@ -2,9 +2,15 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setFontSize,
   setMaxLineWidth,
+  setQuickStart,
+  setSmoothScrolling,
 } from "../features/Settings/SettingsSlice";
 
 export default function GlobalSettings() {
+  const quick_start = useSelector((state) => state.settings.quick_start);
+  const smooth_scrolling = useSelector(
+    (state) => state.settings.smooth_scrolling
+  );
   const max_line_width = useSelector((state) => state.settings.max_line_width);
   const font_size = useSelector((state) => state.settings.font_size);
   const dispatch = useDispatch();
@@ -15,7 +21,31 @@ export default function GlobalSettings() {
         <div className="flex gap-2">
           {["off", "tab", "enter", "space"].map((key) => (
             <button
-              className="text-primary rounded-full bg-background w-25 py-1"
+              onClick={() => dispatch(setQuickStart(key))}
+              className={`text-primary rounded-full bg-background w-25 py-1 ${
+                quick_start === key
+                  ? "bg-primary text-secondary"
+                  : "hover:bg-primary hover:text-secondary"
+              }`}
+              key={key}
+            >
+              {key}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="w-full flex items-center justify-between font-karantina text-2xl">
+        <span className="text-background">Font size</span>
+        <div className="flex gap-2">
+          {["sm", "md", "lg", "xl", "xxl"].map((key) => (
+            <button
+              onClick={() => dispatch(setFontSize(key))}
+              className={`text-primary rounded-full bg-background w-25 py-1 ${
+                font_size === key
+                  ? "bg-primary text-secondary"
+                  : "hover:bg-primary hover:text-secondary"
+              }`}
               key={key}
             >
               {key}
@@ -24,33 +54,16 @@ export default function GlobalSettings() {
         </div>
       </div>
       <div className="w-full flex items-center justify-between font-karantina text-2xl">
-        <span className="text-background">Max line width</span>
-        <div className="flex gap-2">
-          <input
-            onChange={(e) => dispatch(setMaxLineWidth(e.target.value))}
-            value={max_line_width}
-            type="number"
-            className="text-primary rounded-full bg-background w-25 focus:outline-none text-center py-1"
-          ></input>
-        </div>
-      </div>
-      <div className="w-full flex items-center justify-between font-karantina text-2xl">
-        <span className="text-background">Font size</span>
-        <div className="flex gap-2">
-          <input
-            onChange={(e) => dispatch(setFontSize(e.target.value))}
-            value={font_size}
-            type="number"
-            className="text-primary rounded-full bg-background w-25 focus:outline-none text-center py-1"
-          ></input>
-        </div>
-      </div>
-      <div className="w-full flex items-center justify-between font-karantina text-2xl">
         <span className="text-background">Smooth Line Scroll</span>
         <div className="flex gap-2">
           {["off", "on"].map((key) => (
             <button
-              className="text-primary rounded-full bg-background w-25 py-1"
+              onClick={() => dispatch(setSmoothScrolling(key))}
+              className={`text-primary rounded-full bg-background w-25 py-1 ${
+                smooth_scrolling === key
+                  ? "bg-primary text-secondary"
+                  : "hover:bg-primary hover:text-secondary"
+              }`}
               key={key}
             >
               {key}
