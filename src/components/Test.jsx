@@ -56,7 +56,20 @@ function Test() {
       }`}
     >
       {words.map((word, index) => (
-        <div key={index} className="word p-[3px]">
+        <div
+          key={index}
+          className={`word ${
+            font_size === "sm"
+              ? "p-[2px]"
+              : font_size === "md"
+              ? "p-[3px]"
+              : font_size === "lg"
+              ? "p-[4px]"
+              : font_size === "xl"
+              ? "p-[5px]"
+              : "p-[6px]"
+          }`}
+        >
           {Array.from(word).map((letter, i) => (
             <span className="letter" key={i}>
               {letter}
