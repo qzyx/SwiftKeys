@@ -27,11 +27,13 @@
     }
   }
 }
+* {
+  user-select: none;
+}
 body {
   background-color: var(--color-background);
   min-height: 100vh;
   overflow-x: hidden;
-  user-select: none;
 }
 .button {
   cursor: pointer;

@@ -7,10 +7,22 @@ function Test() {
   const count = useSelector((state) => state.testSettings.count);
   const font_size = useSelector((state) => state.settings.font_size);
   const [words, setWords] = useState([]);
+  const reset_key = useSelector((state) => state.settings.quick_start);
   function get_random(list) {
     return list[Math.floor(Math.random() * list.length)];
   }
-
+  useEffect(() => {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === reset_key) {
+        event.preventDefault();
+        const randomWords = [];
+        for (let i = 0; i < count; i++) {
+          randomWords.push(get_random(englishWords));
+        }
+        setWords(randomWords);
+      }
+    });
+  }, [reset_key]);
   // Get 10 random words when component mounts
   useEffect(() => {
     if (option === "words") {

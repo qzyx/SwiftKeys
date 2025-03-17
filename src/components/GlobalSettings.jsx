@@ -21,7 +21,7 @@ export default function GlobalSettings() {
       <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between font-karantina text-2xl gap-2">
         <span className="text-background whitespace-nowrap">Quick restart</span>
         <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
-          {["off", "tab", "enter", "space"].map((key) => (
+          {["off", "Tab", "Enter"].map((key) => (
             <button
               onClick={() => dispatch(setQuickStart(key))}
               className={`text-primary rounded-full bg-background min-w-[5rem] py-1 px-2 text-center ${
