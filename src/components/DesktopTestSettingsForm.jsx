@@ -42,8 +42,10 @@ function DesktopTestSettingsForm({ count, option }) {
             <button
               key={num}
               onClick={() => dispatch(setCount(num))}
-              className={`px-3 button py-1.5 rounded-md hover:bg-tertiary/20 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-tertiary ${
-                num === count ? "bg-tertiary text-primary" : ""
+              className={`px-3  py-1.5 rounded-md  transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-tertiary ${
+                num === count
+                  ? "bg-tertiary text-primary"
+                  : "cursor-pointer hover:bg-tertiary/20"
               }`}
             >
               {num}

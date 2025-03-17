@@ -5,6 +5,17 @@
   --color-secondary: #494949;
   --color-tertiary: #d9d9d9;
 }
+/* Remove number input spinner globally */
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none; /* Chrome, Safari, Edge */
+  margin: 0;
+}
+
 @theme {
   --color-background: var(--color-background);
   --color-primary: var(--color-primary);
