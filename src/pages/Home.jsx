@@ -2,9 +2,10 @@ import { useSelector } from "react-redux";
 import RetryBtn from "../components/RetryBtn";
 import Test from "../components/Test";
 import TestSettings from "../components/TestSettings";
+import useSettings from "../hooks/useSettings";
 
 export default function Home() {
-  
+  const theme = useSettings();
 
   return (
     <div className="w-full">
