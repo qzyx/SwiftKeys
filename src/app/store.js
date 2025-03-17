@@ -26,6 +26,13 @@ export const store = configureStore({
     settings: persistedSettingsReducer,
     testSettings: persistedTestSettingsReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ["persist/PERSIST"],
+        ignoredPaths: ["register", "rehydrate"], // Ignore non-serializable fields
+      },
+    }),
 });
 
 // Persistor
