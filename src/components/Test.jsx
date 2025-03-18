@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { englishWords } from "../assets/words/english";
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
 import RetryBtn from "./RetryBtn";
 
 function Test() {
@@ -11,15 +11,17 @@ function Test() {
   const reset_key = useSelector((state) => state.settings.quick_start);
 
   const [history, setHistory] = useState([]);
-  console.log(history);
   const [wordIndex, setWordIndex] = useState(0);
   const [keyIndex, setKeyIndex] = useState(0);
-  let currentKey = { wordIndex, keyIndex };
-  console.log(currentKey);
-  console.log("wordIndex", wordIndex);
-  console.log("keyIndex", keyIndex);
+  const [waitingForSpace, setWaitingForSpace] = useState(false);
+
   let expectedWord = words[wordIndex];
-  let expectedKey = expectedWord ? expectedWord[keyIndex] : "";
+  // If waiting for space, expect a space character, otherwise expect the next letter
+  let expectedKey = waitingForSpace
+    ? " "
+    : expectedWord
+    ? expectedWord[keyIndex]
+    : "";
 
   function get_random(list) {
     return list[Math.floor(Math.random() * list.length)];
@@ -74,22 +76,37 @@ function Test() {
     }
     setWordIndex(0);
     setKeyIndex(0);
+    setWaitingForSpace(false);
   }
 
-  // Fix for key event handler
+  // Key event handler
   useEffect(() => {
     function handleKeyDown(event) {
-      console.log("key", event.key);
       // If we don't have words yet, or we've reached the end, do nothing
-      if (!expectedWord) return;
+      if (!expectedWord && !waitingForSpace) return;
 
-      // Stop event propagation to prevent both handlers from firing
+      // Stop event propagation
       event.stopPropagation();
 
       // Handle correct key
       if (event.key === expectedKey) {
-        console.log("Correct key");
-        if (keyIndex === expectedWord.length - 1) {
+        if (waitingForSpace) {
+          // We were waiting for a space and got it - move to next word
+          setHistory((prev) => [
+            ...prev,
+            {
+              wordIndex: wordIndex,
+              keyIndex: -1, // Special value for space
+              value: true,
+              isSpace: true,
+            },
+          ]);
+
+          setWaitingForSpace(false);
+          setWordIndex((prev) => prev + 1);
+          setKeyIndex(0);
+        } else if (keyIndex === expectedWord.length - 1) {
+          // Last letter in word - mark as correct and set waiting for space
           setHistory((prev) => [
             ...prev,
             {
@@ -99,11 +116,11 @@ function Test() {
               last: true,
             },
           ]);
-          // Move to next word
 
-          setWordIndex((prev) => prev + 1);
-          setKeyIndex(0);
+          setKeyIndex((prev) => prev + 1); // Move past the end of the word
+          setWaitingForSpace(true); // Now wait for space before next word
         } else {
+          // Normal case - correct letter in the middle of a word
           setHistory((prev) => [
             ...prev,
             {
@@ -114,13 +131,25 @@ function Test() {
             },
           ]);
 
-          // Move to next letter in current word
           setKeyIndex((prev) => prev + 1);
         }
       } else {
-        console.log("Incorrect key");
+        // Incorrect key logic
+        if (waitingForSpace) {
+          // Expected space but got something else
+          setHistory((prev) => [
+            ...prev,
+            {
+              wordIndex: wordIndex,
+              keyIndex: -1,
+              value: false,
+              isSpace: true,
+            },
+          ]);
 
-        if (keyIndex === expectedWord.length - 1) {
+          // Still wait for the correct space
+        } else if (keyIndex === expectedWord.length - 1) {
+          // Last letter in word but incorrect
           setHistory((prev) => [
             ...prev,
             {
@@ -130,10 +159,11 @@ function Test() {
               last: true,
             },
           ]);
-          // Move to next word
-          setWordIndex((prev) => prev + 1);
-          setKeyIndex(0);
+
+          setKeyIndex((prev) => prev + 1);
+          setWaitingForSpace(true); // Still need space for next word
         } else {
+          // Incorrect letter in the middle of a word
           setHistory((prev) => [
             ...prev,
             {
@@ -143,7 +173,7 @@ function Test() {
               last: false,
             },
           ]);
-          // Move to next letter in current word
+
           setKeyIndex((prev) => prev + 1);
         }
       }
@@ -151,11 +181,10 @@ function Test() {
 
     document.addEventListener("keydown", handleKeyDown);
 
-    // Proper cleanup function
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [expectedWord, expectedKey, keyIndex, wordIndex]);
+  }, [expectedWord, expectedKey, keyIndex, wordIndex, waitingForSpace]);
 
   useEffect(() => {
     setHistory([]);
@@ -165,7 +194,7 @@ function Test() {
       <div
         className={`flex px-2  font-mono sm:px-6 md:px-10 lg:px-12 flex-wrap text-secondary overflow-hidden  ${
           font_size === "sm"
-            ? "text-md max-h-[4.5rem] gap-x-1.5"
+            ? "text-md max-h-[4.5rem] gap-x-2"
             : font_size === "md"
             ? "text-xl max-h-[5rem] gap-x-2"
             : font_size === "lg"
@@ -176,11 +205,61 @@ function Test() {
         }`}
       >
         {words.map((word, index) => (
-          <div key={index} className={`word `}>
+          <div key={index} className=" relative">
+            {waitingForSpace && index === wordIndex && (
+              <span>
+                <span
+                  className={`absolute  top-1/2 -translate-y-1/2 ${
+                    font_size === "sm"
+                      ? "h-3.5 w-1.5 -right-1.5"
+                      : font_size === "md"
+                      ? "h-8 w-2 -right-2"
+                      : font_size === "lg"
+                      ? "h-10 w-2.5 -right-2.5"
+                      : font_size === "xl"
+                      ? "h-12 w-3 -right-3"
+                      : "h-14 w-3.5 -right-4"
+                  } bg-secondary rounded-sm `}
+                ></span>
+
+                {/* Glow effect */}
+                <span
+                  className={`absolute -right-1 top-1/2 -translate-y-1/2 ${
+                    font_size === "sm"
+                      ? "h-3.5 w-2.5"
+                      : font_size === "md"
+                      ? "h-4 w-3"
+                      : font_size === "lg"
+                      ? "h-5 w-3.5"
+                      : font_size === "xl"
+                      ? "h-6 w-4"
+                      : "h-7 w-5"
+                  } bg-primary/20 blur-sm rounded-md animate-pulse-slow`}
+                ></span>
+
+                {/* Subtle hint text */}
+                <span
+                  className={`absolute -right-8 top-full text-primary/50 ${
+                    font_size === "sm"
+                      ? "text-[8px]"
+                      : font_size === "md"
+                      ? "text-[9px]"
+                      : font_size === "lg"
+                      ? "text-[10px]"
+                      : font_size === "xl"
+                      ? "text-[11px]"
+                      : "text-[12px]"
+                  }`}
+                >
+                  space
+                </span>
+              </span>
+            )}
             {Array.from(word).map((letter, i) => {
               const historyItem = history.find(
                 (item) => item.wordIndex === index && item.keyIndex === i
               );
+
               return (
                 <span
                   className={`letter ${
@@ -189,12 +268,18 @@ function Test() {
                         ? "text-tertiary"
                         : "text-red-600"
                       : ""
-                  } ${index === wordIndex && i === keyIndex ? "relative" : ""}`}
+                  } ${
+                    index === wordIndex && i === keyIndex && !waitingForSpace
+                      ? "relative"
+                      : ""
+                  }`}
                   key={i}
                 >
-                  {index === wordIndex && i === keyIndex && (
-                    <span className="absolute -left-[1px] top-0 bottom-0 w-0.5 bg-primary animate-pulse"></span>
-                  )}
+                  {index === wordIndex &&
+                    i === keyIndex &&
+                    !waitingForSpace && (
+                      <span className="absolute -left-[1px] top-0 bottom-0 w-0.5 bg-primary animate-pulse"></span>
+                    )}
                   {letter}
                 </span>
               );
@@ -203,7 +288,7 @@ function Test() {
         ))}
       </div>
       <div>
-        <RetryBtn handleReset={handleReset}></RetryBtn>
+        <RetryBtn handleReset={handleReset} />
       </div>
     </div>
   );
