@@ -221,38 +221,6 @@ function Test() {
                       : "h-14 w-3.5 -right-4"
                   } bg-secondary rounded-sm `}
                 ></span>
-
-                {/* Glow effect */}
-                <span
-                  className={`absolute -right-1 top-1/2 -translate-y-1/2 ${
-                    font_size === "sm"
-                      ? "h-3.5 w-2.5"
-                      : font_size === "md"
-                      ? "h-4 w-3"
-                      : font_size === "lg"
-                      ? "h-5 w-3.5"
-                      : font_size === "xl"
-                      ? "h-6 w-4"
-                      : "h-7 w-5"
-                  } bg-primary/20 blur-sm rounded-md animate-pulse-slow`}
-                ></span>
-
-                {/* Subtle hint text */}
-                <span
-                  className={`absolute -right-8 top-full text-primary/50 ${
-                    font_size === "sm"
-                      ? "text-[8px]"
-                      : font_size === "md"
-                      ? "text-[9px]"
-                      : font_size === "lg"
-                      ? "text-[10px]"
-                      : font_size === "xl"
-                      ? "text-[11px]"
-                      : "text-[12px]"
-                  }`}
-                >
-                  space
-                </span>
               </span>
             )}
             {Array.from(word).map((letter, i) => {
