@@ -8,6 +8,9 @@ export default function Home() {
   const max_line_width = useSelector((state) => state.settings.max_line_width);
   const theme = useSettings();
 
+
+  
+
   return (
     <div className="w-full">
       <div>
@@ -16,9 +19,7 @@ export default function Home() {
       <div className={`flex justify-center max-w-[${max_line_width}%] `}>
         <Test></Test>
       </div>
-      <div>
-        <RetryBtn></RetryBtn>
-      </div>
+
     </div>
   );
 }

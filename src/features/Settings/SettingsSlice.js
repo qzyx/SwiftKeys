@@ -4,7 +4,7 @@ export const settingsSlice = createSlice({
   name: "settings",
   initialState: {
     theme: "Default",
-    quick_start: "Tab",
+    quick_start: "off",
     max_line_width: 80,
     font_size: "md",
     smooth_scrolling: false,
