@@ -29,6 +29,7 @@ function Test() {
 
   useEffect(() => {
     const handleResetKeyPress = (event) => {
+      event.preventDefault();
       if (event.key === reset_key) {
         handleReset();
       }
