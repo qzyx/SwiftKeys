@@ -4,18 +4,10 @@ import { useSelector } from "react-redux";
 import { themes } from "../assets/themes/themes";
 import useSettings from "../hooks/useSettings";
 import GlobalSettings from "../components/GlobalSettings";
-import { useNavigate } from "react-router-dom";
+
 export default function Settings() {
-  const navigate = useNavigate();
   const theme = useSettings();
   const reset_key = useSelector((state) => state.settings.quick_start);
-  useEffect(() => {
-    document.addEventListener("keydown", (event) => {
-      if (event.key === reset_key) {
-        navigate("/");
-      }
-    });
-  }, [reset_key]);
 
   return (
     <div className="container mx-auto p-4">

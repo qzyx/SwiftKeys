@@ -5,8 +5,12 @@ import {
   setQuickStart,
   setSmoothScrolling,
 } from "../features/Settings/SettingsSlice";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 export default function GlobalSettings() {
+  const navigate = useNavigate();
+
   const quick_start = useSelector((state) => state.settings.quick_start);
   const smooth_scrolling = useSelector(
     (state) => state.settings.smooth_scrolling
@@ -14,6 +18,14 @@ export default function GlobalSettings() {
   const max_line_width = useSelector((state) => state.settings.max_line_width);
   const font_size = useSelector((state) => state.settings.font_size);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === quick_start) {
+        navigate("/");
+      }
+    });
+  }, [quick_start]);
 
   return (
     <div className="p-4 gap-3 flex flex-col">

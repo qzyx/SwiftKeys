@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { englishWords } from "../assets/words/english";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import RetryBtn from "./RetryBtn";
 
 function Test() {
@@ -9,17 +9,37 @@ function Test() {
   const font_size = useSelector((state) => state.settings.font_size);
   const [words, setWords] = useState([]);
   const reset_key = useSelector((state) => state.settings.quick_start);
+
+  const [history, setHistory] = useState([]);
+  console.log(history);
+  const [wordIndex, setWordIndex] = useState(0);
+  const [keyIndex, setKeyIndex] = useState(0);
+  let currentKey = { wordIndex, keyIndex };
+  console.log(currentKey);
+  console.log("wordIndex", wordIndex);
+  console.log("keyIndex", keyIndex);
+  let expectedWord = words[wordIndex];
+  let expectedKey = expectedWord ? expectedWord[keyIndex] : "";
+
   function get_random(list) {
     return list[Math.floor(Math.random() * list.length)];
   }
+
   useEffect(() => {
-    document.addEventListener("keydown", (event) => {
+    const handleResetKeyPress = (event) => {
       if (event.key === reset_key) {
         handleReset();
       }
-    });
+    };
+
+    document.addEventListener("keydown", handleResetKeyPress);
+
+    return () => {
+      document.removeEventListener("keydown", handleResetKeyPress);
+    };
   }, [reset_key]);
-  // Get 10 random words when component mounts
+
+  // Get words when component mounts or when option/count changes
   useEffect(() => {
     if (option === "words") {
       const randomWords = [];
@@ -36,6 +56,7 @@ function Test() {
       setWords(randomWords);
     }
   }, [option, count]);
+
   function handleReset() {
     if (option === "words") {
       const randomWords = [];
@@ -51,46 +72,107 @@ function Test() {
       }
       setWords(randomWords);
     }
+    setWordIndex(0);
+    setKeyIndex(0);
   }
+
+  // Fix for key event handler
+  useEffect(() => {
+    function handleKeyDown(event) {
+      // If we don't have words yet, or we've reached the end, do nothing
+      if (!expectedWord) return;
+
+      // Stop event propagation to prevent both handlers from firing
+      event.stopPropagation();
+
+      if (event.key === expectedKey) {
+        setHistory((prev) => [
+          ...prev,
+          { wordIndex: wordIndex, keyIndex: keyIndex, value: true },
+        ]);
+
+        console.log("Correct key");
+        // Handle correct key
+        if (keyIndex === expectedWord.length - 1) {
+          // Move to next word
+          setWordIndex((prev) => prev + 1);
+          setKeyIndex(0);
+        } else {
+          // Move to next letter in current word
+          setKeyIndex((prev) => prev + 1);
+        }
+      } else {
+        setHistory((prev) => [
+          ...prev,
+          { wordIndex: wordIndex, keyIndex: keyIndex, value: false },
+        ]);
+        console.log("Incorrect key");
+
+        if (keyIndex === expectedWord.length - 1) {
+          // Move to next word
+          setWordIndex((prev) => prev + 1);
+          setKeyIndex(0);
+        } else {
+          // Move to next letter in current word
+          setKeyIndex((prev) => prev + 1);
+        }
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    // Proper cleanup function
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [expectedWord, expectedKey, keyIndex, wordIndex]);
+
+  useEffect(() => {
+    setHistory([]);
+  }, [words]);
   return (
     <div className="flex flex-col">
       <div
-        className={`flex px-2 sm:px-6 md:px-10 lg:px-12 flex-wrap text-secondary overflow-hidden  ${
+        className={`flex px-2  font-mono sm:px-6 md:px-10 lg:px-12 flex-wrap text-secondary overflow-hidden  ${
           font_size === "sm"
-            ? "text-md max-h-[4.5rem]"
+            ? "text-md max-h-[4.5rem] gap-x-1.5"
             : font_size === "md"
-            ? "text-xl max-h-[6rem]"
+            ? "text-xl max-h-[5rem] gap-x-2"
             : font_size === "lg"
-            ? "text-2xl max-h-[7.5rem]"
+            ? "text-2xl max-h-[8rem] gap-x-3"
             : font_size === "xl"
-            ? "text-3xl max-h-[8.5rem]"
-            : "text-4xl max-h-[9rem]"
+            ? "text-3xl max-h-[9rem] gap-x-4"
+            : "text-4xl max-h-[10rem] gap-x-5"
         }`}
       >
         {words.map((word, index) => (
-          <div
-            key={index}
-            className={`word ${
-              font_size === "sm"
-                ? "p-[2px]"
-                : font_size === "md"
-                ? "p-[3px]"
-                : font_size === "lg"
-                ? "p-[4px]"
-                : font_size === "xl"
-                ? "p-[5px]"
-                : "p-[6px]"
-            }`}
-          >
-            {Array.from(word).map((letter, i) => (
-              <span className="letter" key={i}>
-                {letter}
-              </span>
-            ))}
+          <div key={index} className={`word `}>
+            {Array.from(word).map((letter, i) => {
+              const historyItem = history.find(
+                (item) => item.wordIndex === index && item.keyIndex === i
+              );
+              return (
+                <span
+                  className={`letter ${
+                    historyItem
+                      ? historyItem.value
+                        ? "text-tertiary"
+                        : "text-red-600"
+                      : ""
+                  } ${index === wordIndex && i === keyIndex ? "relative" : ""}`}
+                  key={i}
+                >
+                  {index === wordIndex && i === keyIndex && (
+                    <span className="absolute -left-[1px] top-0 bottom-0 w-0.5 bg-primary animate-pulse"></span>
+                  )}
+                  {letter}
+                </span>
+              );
+            })}
           </div>
         ))}
       </div>
-      <div >
+      <div>
         <RetryBtn handleReset={handleReset}></RetryBtn>
       </div>
     </div>
