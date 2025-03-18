@@ -79,40 +79,70 @@ function Test() {
   // Fix for key event handler
   useEffect(() => {
     function handleKeyDown(event) {
+      console.log("key", event.key);
       // If we don't have words yet, or we've reached the end, do nothing
       if (!expectedWord) return;
 
       // Stop event propagation to prevent both handlers from firing
       event.stopPropagation();
 
+      // Handle correct key
       if (event.key === expectedKey) {
-        setHistory((prev) => [
-          ...prev,
-          { wordIndex: wordIndex, keyIndex: keyIndex, value: true },
-        ]);
-
         console.log("Correct key");
-        // Handle correct key
         if (keyIndex === expectedWord.length - 1) {
+          setHistory((prev) => [
+            ...prev,
+            {
+              wordIndex: wordIndex,
+              keyIndex: keyIndex,
+              value: true,
+              last: true,
+            },
+          ]);
           // Move to next word
+
           setWordIndex((prev) => prev + 1);
           setKeyIndex(0);
         } else {
+          setHistory((prev) => [
+            ...prev,
+            {
+              wordIndex: wordIndex,
+              keyIndex: keyIndex,
+              value: true,
+              last: false,
+            },
+          ]);
+
           // Move to next letter in current word
           setKeyIndex((prev) => prev + 1);
         }
       } else {
-        setHistory((prev) => [
-          ...prev,
-          { wordIndex: wordIndex, keyIndex: keyIndex, value: false },
-        ]);
         console.log("Incorrect key");
 
         if (keyIndex === expectedWord.length - 1) {
+          setHistory((prev) => [
+            ...prev,
+            {
+              wordIndex: wordIndex,
+              keyIndex: keyIndex,
+              value: false,
+              last: true,
+            },
+          ]);
           // Move to next word
           setWordIndex((prev) => prev + 1);
           setKeyIndex(0);
         } else {
+          setHistory((prev) => [
+            ...prev,
+            {
+              wordIndex: wordIndex,
+              keyIndex: keyIndex,
+              value: false,
+              last: false,
+            },
+          ]);
           // Move to next letter in current word
           setKeyIndex((prev) => prev + 1);
         }
