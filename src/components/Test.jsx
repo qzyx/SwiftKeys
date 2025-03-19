@@ -4,6 +4,7 @@ import { englishWords } from "../assets/words/english";
 import React, { useState, useEffect, use, useRef } from "react";
 
 import RetryBtn from "./RetryBtn";
+import TestResult from "./TestResult";
 
 function Test() {
   const [time, setTime] = useState(0);
@@ -245,16 +246,7 @@ function Test() {
     };
   }, [typingStarted, isFinished, option, count]);
   return isFinished ? (
-    <div className="font-mono text-3xl flex gap-5 text-primary">
-      <span className="">WPM</span>
-      {/* pass time in seconds */}
-      <span>
-        {wordsPerMinute(
-          history.filter((item) => item.last === true).length,
-          time / 1000
-        )}
-      </span>
-    </div>
+    <TestResult history={history} time={time}></TestResult>
   ) : (
     <div className="flex flex-col">
       <div
@@ -323,13 +315,13 @@ function Test() {
       </div>
       <div className="flex gap-5 w-full justify-center items-center mt-15 relative">
         {option === "time" ? (
-          <div className="text-secondary font-mono text-3xl flex flex-col gap-2 items-center absolute left-[25%] sm:left-[40%]">
+          <div className="text-secondary font-mono text-3xl flex flex-col gap-2 items-center absolute left-2 sm:left-6 md:left-10 lg:left-12 bottom-5">
             <span>{(time / 1000).toFixed(2)}</span>
             <span className="h-1 w-10 bg-secondary"></span>
             <span>{count}</span>
           </div>
         ) : (
-          <div className="text-secondary font-mono text-3xl flex flex-col gap-2 items-center absolute left-[25%] sm:left-[40%]">
+          <div className="text-secondary font-mono text-3xl flex flex-col gap-2 items-center absolute left-2 sm:left-6 md:left-10 lg:left-12 bottom-5 ">
             <span>{history.filter((item) => item.last === true).length}</span>
             <span className="h-1 w-10 bg-secondary"></span>
             <span>{count}</span>
