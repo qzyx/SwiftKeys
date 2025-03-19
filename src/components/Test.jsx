@@ -1,9 +1,12 @@
 import { useSelector } from "react-redux";
 import { englishWords } from "../assets/words/english";
 import React, { useState, useEffect } from "react";
+
 import RetryBtn from "./RetryBtn";
 
 function Test() {
+  const [time, setTime] = useState(0);
+  const [typingStarted, setTypingStarted] = useState(false);
   const option = useSelector((state) => state.testSettings.option);
   const count = useSelector((state) => state.testSettings.count);
   const font_size = useSelector((state) => state.settings.font_size);
@@ -83,6 +86,9 @@ function Test() {
   // Key event handler
   useEffect(() => {
     function handleKeyDown(event) {
+      if (!typingStarted && event.key !== reset_key) {
+        setTypingStarted(true);
+      }
       // If we don't have words yet, or we've reached the end, do nothing
       if (!expectedWord && !waitingForSpace) return;
 
@@ -186,12 +192,34 @@ function Test() {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [expectedWord, expectedKey, keyIndex, wordIndex, waitingForSpace]);
+  useEffect(() => {
+    setTypingStarted(false);
+    setHistory([]);
+    setKeyIndex(0);
+    setWordIndex(0);
+    setWaitingForSpace(false);
+  }, [words]);
 
   useEffect(() => {
-    setHistory([]);
-  }, [words]);
+
+    if (option === "time") {
+      setTime(0);
+      let timeInterval;
+
+      if (typingStarted) {
+        console.log("time interval started");
+        timeInterval = setInterval(() => {
+          setTime((prevTime) => prevTime + 1);
+        }, 1000);
+      }
+      return () => {
+        clearInterval(timeInterval);
+      };
+    }
+  }, [words, option,typingStarted]);
   return (
     <div className="flex flex-col">
+      {option === "time" && <span className="text-white">{time}</span>}
       <div
         className={`flex px-2  font-mono sm:px-6 md:px-10 lg:px-12 flex-wrap text-secondary overflow-hidden  ${
           font_size === "sm"
