@@ -246,7 +246,12 @@ function Test() {
     };
   }, [typingStarted, isFinished, option, count]);
   return isFinished ? (
-    <TestResult history={history} time={time}></TestResult>
+    <TestResult
+      history={history}
+      option={option}
+      count={count}
+      time={time}
+    ></TestResult>
   ) : (
     <div className="flex flex-col">
       <div
