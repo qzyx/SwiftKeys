@@ -201,13 +201,11 @@ function Test() {
   }, [words]);
 
   useEffect(() => {
-
     if (option === "time") {
       setTime(0);
       let timeInterval;
 
       if (typingStarted) {
-        console.log("time interval started");
         timeInterval = setInterval(() => {
           setTime((prevTime) => prevTime + 1);
         }, 1000);
@@ -216,10 +214,10 @@ function Test() {
         clearInterval(timeInterval);
       };
     }
-  }, [words, option,typingStarted]);
+  }, [words, option, typingStarted]);
   return (
     <div className="flex flex-col">
-      {option === "time" && <span className="text-white">{time}</span>}
+      
       <div
         className={`flex px-2  font-mono sm:px-6 md:px-10 lg:px-12 flex-wrap text-secondary overflow-hidden  ${
           font_size === "sm"
@@ -284,7 +282,8 @@ function Test() {
           </div>
         ))}
       </div>
-      <div>
+      <div className="flex gap-5 w-full justify-center items-center mt-15 relative">
+      {option === "time" && <span className="text-white text-3xl absolute left-[40%]">{time}/{count}</span>}
         <RetryBtn handleReset={handleReset} />
       </div>
     </div>
