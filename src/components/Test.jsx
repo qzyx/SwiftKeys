@@ -1,9 +1,9 @@
+import { get_random } from "../features/Test/TestFunctions";
 import { useSelector } from "react-redux";
 import { englishWords } from "../assets/words/english";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 
 import RetryBtn from "./RetryBtn";
-import { track } from "framer-motion/client";
 
 function Test() {
   const [time, setTime] = useState(0);
@@ -13,7 +13,7 @@ function Test() {
   const font_size = useSelector((state) => state.settings.font_size);
   const [words, setWords] = useState([]);
   const reset_key = useSelector((state) => state.settings.quick_start);
-
+  const [isFinished, setIsFinished] = useState(false);
   const [history, setHistory] = useState([]);
   const [wordIndex, setWordIndex] = useState(0);
   const [keyIndex, setKeyIndex] = useState(0);
@@ -27,8 +27,22 @@ function Test() {
     ? expectedWord[keyIndex]
     : "";
 
-  function get_random(list) {
-    return list[Math.floor(Math.random() * list.length)];
+  function handleReset() {
+    console.log("reseting to count", count);
+    if (option === "words") {
+      const randomWords = [];
+      for (let i = 0; i < count; i++) {
+        randomWords.push(get_random(englishWords));
+      }
+      setWords(randomWords);
+    } else {
+      // Get random letters
+      const randomWords = [];
+      for (let i = 0; i < 100; i++) {
+        randomWords.push(get_random(englishWords));
+      }
+      setWords(randomWords);
+    }
   }
 
   useEffect(() => {
@@ -44,7 +58,7 @@ function Test() {
     return () => {
       document.removeEventListener("keydown", handleResetKeyPress);
     };
-  }, [reset_key]);
+  }, [reset_key, count]);
 
   // Get words when component mounts or when option/count changes
   useEffect(() => {
@@ -63,26 +77,6 @@ function Test() {
       setWords(randomWords);
     }
   }, [option, count]);
-
-  function handleReset() {
-    if (option === "words") {
-      const randomWords = [];
-      for (let i = 0; i < count; i++) {
-        randomWords.push(get_random(englishWords));
-      }
-      setWords(randomWords);
-    } else {
-      // Get random letters
-      const randomWords = [];
-      for (let i = 0; i < 100; i++) {
-        randomWords.push(get_random(englishWords));
-      }
-      setWords(randomWords);
-    }
-    setWordIndex(0);
-    setKeyIndex(0);
-    setWaitingForSpace(false);
-  }
 
   // Key event handler
   useEffect(() => {
@@ -115,6 +109,11 @@ function Test() {
           setKeyIndex(0);
         } else if (keyIndex === expectedWord.length - 1) {
           // Last letter in word - mark as correct and set waiting for space
+          if (option === "words") {
+            if (wordIndex === count - 1) {
+              console.log("end of the test");
+            }
+          }
           setHistory((prev) => [
             ...prev,
             {
@@ -199,8 +198,13 @@ function Test() {
     setKeyIndex(0);
     setWordIndex(0);
     setWaitingForSpace(false);
+    setIsFinished(false);
   }, [words]);
-
+  useEffect(() => {
+    if (time === count) {
+      setIsFinished(true);
+    }
+  }, [time]);
   useEffect(() => {
     if (option === "time") {
       setTime(0);
@@ -209,14 +213,18 @@ function Test() {
       if (typingStarted) {
         timeInterval = setInterval(() => {
           setTime((prevTime) => prevTime + 1);
+          console.log("interval runnning");
         }, 1000);
       }
+
       return () => {
         clearInterval(timeInterval);
       };
     }
-  }, [words, option, typingStarted]);
-  return (
+  }, [words, option, typingStarted, count]);
+  return isFinished ? (
+    <div></div>
+  ) : (
     <div className="flex flex-col">
       <div
         className={`flex px-2  font-mono sm:px-6 md:px-10 lg:px-12 flex-wrap text-secondary overflow-hidden  ${

@@ -1,6 +1,4 @@
 import { RotateCcw } from "lucide-react";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
 
 function RetryBtn({ handleReset }) {
   return (
