@@ -1,7 +1,7 @@
 import { get_random, wordsPerMinute } from "../features/Test/TestFunctions";
 import { useSelector } from "react-redux";
 import { englishWords } from "../assets/words/english";
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect, use, useRef } from "react";
 
 import RetryBtn from "./RetryBtn";
 
@@ -68,7 +68,7 @@ function Test() {
     return () => {
       document.removeEventListener("keydown", handleResetKeyPress);
     };
-  }, [reset_key, count]);
+  }, [reset_key, count, option]);
 
   // Get words when component mounts or when option/count changes
   useEffect(() => {
@@ -211,29 +211,49 @@ function Test() {
 
   useEffect(() => {
     if (option === "time") {
-      if (time === count) {
+      if (time === count * 1000) {
         setIsFinished(true);
       }
     }
-  }, [time]);
+  }, [time, count, option]);
+
+  const startTimeRef = useRef(null);
+  const requestIdRef = useRef(null);
+
   useEffect(() => {
-    let timeInterval;
+    let startTime;
+
+    const updateTimer = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const elapsedTime = timestamp - startTime;
+      setTime(Math.floor(elapsedTime));
+      if (option === "time" && elapsedTime >= count * 1000) {
+        setIsFinished(true);
+        return;
+      }
+
+      requestIdRef.current = requestAnimationFrame(updateTimer);
+    };
 
     if (typingStarted && !isFinished) {
-      timeInterval = setInterval(() => {
-        setTime((prevTime) => prevTime + 1);
-        console.log("interval runnning");
-      }, 1000);
+      requestIdRef.current = requestAnimationFrame(updateTimer);
     }
-
     return () => {
-      clearInterval(timeInterval);
+      if (requestIdRef.current) {
+        cancelAnimationFrame(requestIdRef.current);
+      }
     };
-  }, [words, option, typingStarted, count, isFinished]);
+  }, [typingStarted, isFinished, option, count]);
   return isFinished ? (
     <div className="font-mono text-3xl flex gap-5 text-primary">
       <span className="">WPM</span>
-      <span>{wordsPerMinute(count, time)}</span>
+      {/* pass time in seconds */}
+      <span>
+        {wordsPerMinute(
+          history.filter((item) => item.last === true).length,
+          time / 1000
+        )}
+      </span>
     </div>
   ) : (
     <div className="flex flex-col">
@@ -302,9 +322,15 @@ function Test() {
         ))}
       </div>
       <div className="flex gap-5 w-full justify-center items-center mt-15 relative">
-        {option === "time" && (
+        {option === "time" ? (
           <div className="text-secondary font-mono text-3xl flex flex-col gap-2 items-center absolute left-[25%] sm:left-[40%]">
-            <span>{time}</span>
+            <span>{(time / 1000).toFixed(2)}</span>
+            <span className="h-1 w-10 bg-secondary"></span>
+            <span>{count}</span>
+          </div>
+        ) : (
+          <div className="text-secondary font-mono text-3xl flex flex-col gap-2 items-center absolute left-[25%] sm:left-[40%]">
+            <span>{history.filter((item) => item.last === true).length}</span>
             <span className="h-1 w-10 bg-secondary"></span>
             <span>{count}</span>
           </div>
