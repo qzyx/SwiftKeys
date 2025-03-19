@@ -1,4 +1,4 @@
-import { get_random } from "../features/Test/TestFunctions";
+import { get_random, wordsPerMinute } from "../features/Test/TestFunctions";
 import { useSelector } from "react-redux";
 import { englishWords } from "../assets/words/english";
 import React, { useState, useEffect, use } from "react";
@@ -26,6 +26,16 @@ function Test() {
     : expectedWord
     ? expectedWord[keyIndex]
     : "";
+
+  useEffect(() => {
+    setTypingStarted(false);
+    setHistory([]);
+    setKeyIndex(0);
+    setWordIndex(0);
+    setWaitingForSpace(false);
+    setIsFinished(false);
+    setTime(0);
+  }, [words]);
 
   function handleReset() {
     console.log("reseting to count", count);
@@ -111,7 +121,7 @@ function Test() {
           // Last letter in word - mark as correct and set waiting for space
           if (option === "words") {
             if (wordIndex === count - 1) {
-              console.log("end of the test");
+              setIsFinished(true);
             }
           }
           setHistory((prev) => [
@@ -128,6 +138,7 @@ function Test() {
           setWaitingForSpace(true); // Now wait for space before next word
         } else {
           // Normal case - correct letter in the middle of a word
+
           setHistory((prev) => [
             ...prev,
             {
@@ -156,6 +167,11 @@ function Test() {
 
           // Still wait for the correct space
         } else if (keyIndex === expectedWord.length - 1) {
+          if (option === "words") {
+            if (wordIndex === count - 1) {
+              setIsFinished(true);
+            }
+          }
           // Last letter in word but incorrect
           setHistory((prev) => [
             ...prev,
@@ -192,38 +208,33 @@ function Test() {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [expectedWord, expectedKey, keyIndex, wordIndex, waitingForSpace]);
+
   useEffect(() => {
-    setTypingStarted(false);
-    setHistory([]);
-    setKeyIndex(0);
-    setWordIndex(0);
-    setWaitingForSpace(false);
-    setIsFinished(false);
-  }, [words]);
-  useEffect(() => {
-    if (time === count) {
-      setIsFinished(true);
+    if (option === "time") {
+      if (time === count) {
+        setIsFinished(true);
+      }
     }
   }, [time]);
   useEffect(() => {
-    if (option === "time") {
-      setTime(0);
-      let timeInterval;
+    let timeInterval;
 
-      if (typingStarted) {
-        timeInterval = setInterval(() => {
-          setTime((prevTime) => prevTime + 1);
-          console.log("interval runnning");
-        }, 1000);
-      }
-
-      return () => {
-        clearInterval(timeInterval);
-      };
+    if (typingStarted && !isFinished) {
+      timeInterval = setInterval(() => {
+        setTime((prevTime) => prevTime + 1);
+        console.log("interval runnning");
+      }, 1000);
     }
-  }, [words, option, typingStarted, count]);
+
+    return () => {
+      clearInterval(timeInterval);
+    };
+  }, [words, option, typingStarted, count, isFinished]);
   return isFinished ? (
-    <div></div>
+    <div className="font-mono text-3xl flex gap-5 text-primary">
+      <span className="">WPM</span>
+      <span>{wordsPerMinute(count, time)}</span>
+    </div>
   ) : (
     <div className="flex flex-col">
       <div
