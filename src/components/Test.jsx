@@ -18,6 +18,7 @@ function Test() {
   const [history, setHistory] = useState([]);
   const [wordIndex, setWordIndex] = useState(0);
   const [keyIndex, setKeyIndex] = useState(0);
+
   const [waitingForSpace, setWaitingForSpace] = useState(false);
 
   let expectedWord = words[wordIndex];
@@ -91,16 +92,44 @@ function Test() {
 
   // Key event handler
   useEffect(() => {
+    function handleBackspace() {
+      console.log(history);
+      setHistory((prev) => [...prev.slice(0, -1)]);
+      console.log(keyIndex);
+      if (keyIndex === 0 && wordIndex === 0) {
+        console.log("backspace --- nothing");
+        return;
+      }
+      if (keyIndex === 0 && wordIndex !== 0) {
+        console.log("backspace --- going to space");
+        setWordIndex((prev) => prev - 1);
+        setKeyIndex(words[wordIndex - 1].length);
+        setWaitingForSpace(true);
+        return;
+      }
+      if (keyIndex === words[wordIndex].length) {
+        console.log("backspace --- going to previous word");
+        setKeyIndex(words[wordIndex].length - 1);
+        setWaitingForSpace(false);
+        return;
+      }
+      if (keyIndex !== 0 && keyIndex !== words[wordIndex].length) {
+        console.log("backspace --- going to previous letter");
+        setKeyIndex((prev) => prev - 1);
+        return;
+      }
+    }
     function handleKeyDown(event) {
       if (!typingStarted && event.key !== reset_key) {
         setTypingStarted(true);
       }
-      // If we don't have words yet, or we've reached the end, do nothing
-      if (!expectedWord && !waitingForSpace) return;
 
       // Stop event propagation
       event.stopPropagation();
-
+      if (event.key === "Backspace") {
+        handleBackspace();
+        return;
+      }
       // Handle correct key
       if (event.key === expectedKey) {
         if (waitingForSpace) {
@@ -152,7 +181,8 @@ function Test() {
 
           setKeyIndex((prev) => prev + 1);
         }
-      } else {
+      } else if (event.key !== "Backspace") {
+        console.log("not backspace");
         // Incorrect key logic
         if (waitingForSpace) {
           // Expected space but got something else
