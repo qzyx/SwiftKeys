@@ -3,6 +3,7 @@ import { englishWords } from "../assets/words/english";
 import React, { useState, useEffect } from "react";
 
 import RetryBtn from "./RetryBtn";
+import { track } from "framer-motion/client";
 
 function Test() {
   const [time, setTime] = useState(0);
@@ -217,7 +218,6 @@ function Test() {
   }, [words, option, typingStarted]);
   return (
     <div className="flex flex-col">
-      
       <div
         className={`flex px-2  font-mono sm:px-6 md:px-10 lg:px-12 flex-wrap text-secondary overflow-hidden  ${
           font_size === "sm"
@@ -283,7 +283,13 @@ function Test() {
         ))}
       </div>
       <div className="flex gap-5 w-full justify-center items-center mt-15 relative">
-      {option === "time" && <span className="text-white text-3xl absolute left-[40%]">{time}/{count}</span>}
+        {option === "time" && (
+          <div className="text-secondary font-mono text-3xl flex flex-col gap-2 items-center absolute left-[25%] sm:left-[40%]">
+            <span>{time}</span>
+            <span className="h-1 w-10 bg-secondary"></span>
+            <span>{count}</span>
+          </div>
+        )}
         <RetryBtn handleReset={handleReset} />
       </div>
     </div>
