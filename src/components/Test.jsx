@@ -140,7 +140,7 @@ function Test() {
               wordIndex: wordIndex,
               keyIndex: -1, // Special value for space
               value: true,
-              isSpace: true,
+              last: "space",
             },
           ]);
 
@@ -185,18 +185,7 @@ function Test() {
         console.log("not backspace");
         // Incorrect key logic
         if (waitingForSpace) {
-          // Expected space but got something else
-          setHistory((prev) => [
-            ...prev,
-            {
-              wordIndex: wordIndex,
-              keyIndex: -1,
-              value: false,
-              isSpace: true,
-            },
-          ]);
-
-          // Still wait for the correct space
+          null;
         } else if (keyIndex === expectedWord.length - 1) {
           if (option === "words") {
             if (wordIndex === count - 1) {
