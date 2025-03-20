@@ -5,6 +5,7 @@ import React, { useState, useEffect, use, useRef } from "react";
 
 import RetryBtn from "./RetryBtn";
 import TestResult from "./TestResult";
+import { text } from "framer-motion/client";
 
 function Test() {
   const [time, setTime] = useState(0);
@@ -20,7 +21,8 @@ function Test() {
   const [keyIndex, setKeyIndex] = useState(0);
 
   const [waitingForSpace, setWaitingForSpace] = useState(false);
-
+  const [pushOfset, setPushOfset] = useState(0);
+  const [curPos, setCurPos] = useState([]);
   let expectedWord = words[wordIndex];
   // If waiting for space, expect a space character, otherwise expect the next letter
   let expectedKey = waitingForSpace
@@ -28,6 +30,38 @@ function Test() {
     : expectedWord
     ? expectedWord[keyIndex]
     : "";
+
+  const cursor = document.getElementById("cursor");
+  const word = document.getElementById("word");
+
+  useEffect(() => {
+    if (!cursor || !word) return;
+    // Convert text size values to rem
+    const textSizes = {
+      sm: "1",
+      md: "1.25",
+      lg: "1.5",
+      xl: "1.875",
+      xxl: "2.25",
+    };
+
+    const cursorPosition = cursor.getBoundingClientRect();
+
+    if (cursorPosition.top === 0) {
+      return;
+    }
+    if (curPos.filter((item) => item.top === cursorPosition.top).length === 0) {
+      setCurPos((prev) => [...prev, { top: cursorPosition.top }]);
+      console.log("cursor position", curPos);
+      if (curPos.length === 2 &&  cursorPosition.top === curPos[1].top) {
+        // Remove the first object from curPos array
+        setCurPos((prev) => prev.slice(1));
+        console.log("ofseting...");
+        setPushOfset((prev) => prev + Number(textSizes[font_size]));
+        console.log("ofset", pushOfset);
+      }
+    }
+  }, [history, cursor, pushOfset]);
 
   useEffect(() => {
     setTypingStarted(false);
@@ -37,6 +71,8 @@ function Test() {
     setWaitingForSpace(false);
     setIsFinished(false);
     setTime(0);
+    setCurPos([]);
+    setPushOfset(0);
   }, [words]);
 
   function handleReset() {
@@ -93,28 +129,23 @@ function Test() {
   // Key event handler
   useEffect(() => {
     function handleBackspace() {
-      console.log(history);
       setHistory((prev) => [...prev.slice(0, -1)]);
-      console.log(keyIndex);
+
       if (keyIndex === 0 && wordIndex === 0) {
-        console.log("backspace --- nothing");
         return;
       }
       if (keyIndex === 0 && wordIndex !== 0) {
-        console.log("backspace --- going to space");
         setWordIndex((prev) => prev - 1);
         setKeyIndex(words[wordIndex - 1].length);
         setWaitingForSpace(true);
         return;
       }
       if (keyIndex === words[wordIndex].length) {
-        console.log("backspace --- going to previous word");
         setKeyIndex(words[wordIndex].length - 1);
         setWaitingForSpace(false);
         return;
       }
       if (keyIndex !== 0 && keyIndex !== words[wordIndex].length) {
-        console.log("backspace --- going to previous letter");
         setKeyIndex((prev) => prev - 1);
         return;
       }
@@ -182,7 +213,6 @@ function Test() {
           setKeyIndex((prev) => prev + 1);
         }
       } else if (event.key !== "Backspace") {
-        console.log("not backspace");
         // Incorrect key logic
         if (waitingForSpace) {
           null;
@@ -276,9 +306,9 @@ function Test() {
       <div
         className={`flex px-2  font-mono sm:px-6 md:px-10 lg:px-12 flex-wrap text-secondary overflow-hidden  ${
           font_size === "sm"
-            ? "text-md max-h-[4.5rem] gap-x-2"
+            ? "text-md max-h-[6rem] gap-x-2"
             : font_size === "md"
-            ? "text-xl max-h-[5rem] gap-x-2"
+            ? "text-xl max-h-[7.2rem] gap-x-2"
             : font_size === "lg"
             ? "text-2xl max-h-[8rem] gap-x-3"
             : font_size === "xl"
@@ -287,7 +317,12 @@ function Test() {
         }`}
       >
         {words.map((word, index) => (
-          <div key={index} className=" relative">
+          <div
+            key={index}
+            id="word"
+            style={{ transform: `translateY(-${pushOfset}rem)` }}
+            className={` relative   `}
+          >
             {waitingForSpace && index === wordIndex && (
               <span>
                 <span
@@ -328,7 +363,10 @@ function Test() {
                   {index === wordIndex &&
                     i === keyIndex &&
                     !waitingForSpace && (
-                      <span className="absolute -left-[1px] top-0 bottom-0 w-0.5 bg-primary animate-pulse"></span>
+                      <span
+                        id="cursor"
+                        className=" absolute -left-[1px] top-0 bottom-0 w-0.5 bg-primary animate-pulse"
+                      ></span>
                     )}
                   {letter}
                 </span>
