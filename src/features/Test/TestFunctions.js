@@ -8,7 +8,5 @@ export const formatTime = (timeInMs) => {
   const milliseconds = Math.floor((timeInMs % 1000) / 10); // Get only 2 digits
 };
 export function wordsPerMinute(words, seconds) {
-  console.log(words);
-  console.log(seconds);
   return Math.round(words / (seconds / 60));
 }
