@@ -1,15 +1,23 @@
 import { get_random, wordsPerMinute } from "../features/Test/TestFunctions";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { englishWords } from "../assets/words/english";
-import React, { useState, useEffect, use, useRef } from "react";
+import React, { useState, useEffect, use, useRef, useDebugValue } from "react";
 
 import RetryBtn from "./RetryBtn";
 import TestResult from "./TestResult";
-import { text } from "framer-motion/client";
+import { p, text } from "framer-motion/client";
+import {
+  setCompleted,
+  setTotal,
+} from "../features/UserStatsSlice/UserStatsSlice";
 
 function Test() {
+  const dispatch = useDispatch();
   const [time, setTime] = useState(0);
   const [typingStarted, setTypingStarted] = useState(false);
+  const total = useSelector((state) => state.userStats.userStats.total);
+  const topWpm = useSelector((state) => state.userStats.userStats.topWpm);
+  const completed = useSelector((state) => state.userStats.userStats.completed);
   const option = useSelector((state) => state.testSettings.option);
   const count = useSelector((state) => state.testSettings.count);
   const font_size = useSelector((state) => state.settings.font_size);
@@ -31,48 +39,6 @@ function Test() {
     ? expectedWord[keyIndex]
     : "";
 
-  const cursor = document.getElementById("cursor");
-  const word = document.getElementById("word");
-
-  useEffect(() => {
-    if (!cursor || !word) return;
-
-    // Convert text size values to rem
-    const textSizes = {
-      sm: "1",
-      md: "1.25",
-      lg: "1.5",
-      xl: "1.875",
-      xxl: "2.25",
-    };
-
-    const cursorPosition = cursor.getBoundingClientRect();
-    if (cursorPosition.top === 0) {
-      return;
-    }
-
-    // Check if this cursor position already exists in the array
-    if (!curPos.some((item) => item.top === cursorPosition.top)) {
-      // Use functional update to avoid dependency issues
-      setCurPos((prev) => {
-        console.log(curPos)
-        const newCurPos = [...prev, { top: cursorPosition.top }];
-        // Handle the array length inside this callback
-        if (newCurPos.length === 3) {
-          // Schedule offset update separately
-          setTimeout(() => {
-            setPushOfset((prev) => prev + Number(textSizes[font_size]));
-          }, 0);
-
-          // Return array without first element
-          return newCurPos.slice(2);
-        }
-
-        return newCurPos;
-      });
-    }
-  }, [cursor, word, font_size, curPos]);
-
   useEffect(() => {
     setTypingStarted(false);
     setHistory([]);
@@ -86,7 +52,6 @@ function Test() {
   }, [words]);
 
   function handleReset() {
-    console.log("reseting to count", count);
     if (option === "words") {
       const randomWords = [];
       for (let i = 0; i < count; i++) {
@@ -163,6 +128,7 @@ function Test() {
     function handleKeyDown(event) {
       if (!typingStarted && event.key !== reset_key) {
         setTypingStarted(true);
+        dispatch(setTotal(total + 1));
       }
 
       // Stop event propagation
@@ -193,6 +159,7 @@ function Test() {
           if (option === "words") {
             if (wordIndex === count - 1) {
               setIsFinished(true);
+              dispatch(setCompleted(completed + 1));
             }
           }
           setHistory((prev) => [
@@ -273,6 +240,7 @@ function Test() {
     if (option === "time") {
       if (time === count * 1000) {
         setIsFinished(true);
+        dispatch(setCompleted(completed + 1));
       }
     }
   }, [time, count, option]);
@@ -289,6 +257,7 @@ function Test() {
       setTime(Math.floor(elapsedTime));
       if (option === "time" && elapsedTime >= count * 1000) {
         setIsFinished(true);
+        dispatch(setCompleted(completed + 1));
         return;
       }
 
@@ -331,7 +300,7 @@ function Test() {
             key={index}
             id="word"
             style={{ transform: `translateY(-${pushOfset}rem)` }}
-            className={` relative   `}
+            className={` relative  `}
           >
             {waitingForSpace && index === wordIndex && (
               <span>

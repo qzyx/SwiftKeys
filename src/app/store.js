@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import settingsReducer from "../features/Settings/SettingsSlice";
 import testSettingsReducer from "../features/Test/TestSettingsSlice";
-
+import userStatsReducer from "../features/UserStatsSlice/UserStatsSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // Using localStorage for web
 
@@ -20,11 +20,17 @@ const persistedTestSettingsReducer = persistReducer(
   persistConfig,
   testSettingsReducer
 );
+
+const persistedUserStatsReducer = persistReducer(
+  persistConfig,
+  userStatsReducer
+);
 // Configure store
 export const store = configureStore({
   reducer: {
     settings: persistedSettingsReducer,
     testSettings: persistedTestSettingsReducer,
+    userStats: persistedUserStatsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
