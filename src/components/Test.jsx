@@ -36,6 +36,7 @@ function Test() {
 
   useEffect(() => {
     if (!cursor || !word) return;
+
     // Convert text size values to rem
     const textSizes = {
       sm: "1",
@@ -46,22 +47,31 @@ function Test() {
     };
 
     const cursorPosition = cursor.getBoundingClientRect();
-
     if (cursorPosition.top === 0) {
       return;
     }
-    if (curPos.filter((item) => item.top === cursorPosition.top).length === 0) {
-      setCurPos((prev) => [...prev, { top: cursorPosition.top }]);
-      console.log("cursor position", curPos);
-      if (curPos.length === 2 &&  cursorPosition.top === curPos[1].top) {
-        // Remove the first object from curPos array
-        setCurPos((prev) => prev.slice(1));
-        console.log("ofseting...");
-        setPushOfset((prev) => prev + Number(textSizes[font_size]));
-        console.log("ofset", pushOfset);
-      }
+
+    // Check if this cursor position already exists in the array
+    if (!curPos.some((item) => item.top === cursorPosition.top)) {
+      // Use functional update to avoid dependency issues
+      setCurPos((prev) => {
+        console.log(curPos)
+        const newCurPos = [...prev, { top: cursorPosition.top }];
+        // Handle the array length inside this callback
+        if (newCurPos.length === 3) {
+          // Schedule offset update separately
+          setTimeout(() => {
+            setPushOfset((prev) => prev + Number(textSizes[font_size]));
+          }, 0);
+
+          // Return array without first element
+          return newCurPos.slice(2);
+        }
+
+        return newCurPos;
+      });
     }
-  }, [history, cursor, pushOfset]);
+  }, [cursor, word, font_size, curPos]);
 
   useEffect(() => {
     setTypingStarted(false);
