@@ -3,7 +3,7 @@ import { wordsPerMinute } from "../features/Test/TestFunctions";
 import { setTopWpm } from "../features/UserStatsSlice/UserStatsSlice";
 import { useState, useEffect } from "react";
 import { Crown, Clock, Trophy, ArrowRight } from "lucide-react";
-
+import { motion } from "framer-motion";
 export default function TestResult({ history, time, option, count }) {
   const correctWords = countCorrectWords(history);
   const wpm = wordsPerMinute(correctWords, time / 1000);
@@ -57,7 +57,13 @@ export default function TestResult({ history, time, option, count }) {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto my-12 px-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.125 }}
+      exit={{ opacity: 0 }}
+      className="w-full max-w-4xl mx-auto my-12 px-4"
+    >
       <div className="backdrop-blur-md bg-white/30 dark:bg-secondary-800/30 rounded-2xl border border-white/20 dark:border-secondary-700/20 shadow-xl overflow-hidden transition-all">
         <div className="bg-gradient-to-r from-primary/10 to-transparent p-8 sm:p-10">
           <h2 className="text-3xl sm:text-4xl font-bold text-primary dark:text-primary mb-2">
@@ -163,6 +169,6 @@ export default function TestResult({ history, time, option, count }) {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -10,6 +10,7 @@ import {
   setCompleted,
   setTotal,
 } from "../features/UserStatsSlice/UserStatsSlice";
+import { AnimatePresence, motion } from "framer-motion";
 
 function Test() {
   const dispatch = useDispatch();
@@ -274,103 +275,113 @@ function Test() {
     };
   }, [typingStarted, isFinished, option, count]);
   return isFinished ? (
-    <TestResult
-      history={history}
-      option={option}
-      count={count}
-      time={time}
-    ></TestResult>
+    <AnimatePresence mode="wait">
+      <TestResult
+        history={history}
+        option={option}
+        count={count}
+        time={time}
+      ></TestResult>
+    </AnimatePresence>
   ) : (
-    <div className="flex flex-col">
-      <div
-        className={`flex px-2  font-mono sm:px-6 md:px-10 lg:px-12 flex-wrap text-secondary overflow-hidden  ${
-          font_size === "sm"
-            ? "text-md max-h-[6rem] gap-x-2"
-            : font_size === "md"
-            ? "text-xl max-h-[7.2rem] gap-x-2"
-            : font_size === "lg"
-            ? "text-2xl max-h-[8rem] gap-x-3"
-            : font_size === "xl"
-            ? "text-3xl max-h-[9rem] gap-x-4"
-            : "text-4xl max-h-[10rem] gap-x-5"
-        }`}
+    <AnimatePresence mode="wait">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.125 }}
+        className="flex flex-col"
       >
-        {words.map((word, index) => (
-          <div
-            key={index}
-            id="word"
-            style={{ transform: `translateY(-${pushOfset}rem)` }}
-            className={` relative  `}
-          >
-            {waitingForSpace && index === wordIndex && (
-              <span>
-                <span
-                  className={`absolute  top-1/2 -translate-y-1/2 ${
-                    font_size === "sm"
-                      ? "h-3.5 w-1.5 -right-1.5"
-                      : font_size === "md"
-                      ? "h-8 w-2 -right-2"
-                      : font_size === "lg"
-                      ? "h-10 w-2.5 -right-2.5"
-                      : font_size === "xl"
-                      ? "h-12 w-3 -right-3"
-                      : "h-14 w-3.5 -right-4"
-                  } bg-secondary rounded-sm `}
-                ></span>
-              </span>
-            )}
-            {Array.from(word).map((letter, i) => {
-              const historyItem = history.find(
-                (item) => item.wordIndex === index && item.keyIndex === i
-              );
-
-              return (
-                <span
-                  className={`letter ${
-                    historyItem
-                      ? historyItem.value
-                        ? "text-tertiary"
-                        : "text-red-600"
-                      : ""
-                  } ${
-                    index === wordIndex && i === keyIndex && !waitingForSpace
-                      ? "relative"
-                      : ""
-                  }`}
-                  key={i}
-                >
-                  {index === wordIndex &&
-                    i === keyIndex &&
-                    !waitingForSpace && (
-                      <span
-                        id="cursor"
-                        className=" absolute -left-[1px] top-0 bottom-0 w-0.5 bg-primary animate-pulse"
-                      ></span>
-                    )}
-                  {letter}
+        <div
+          className={`flex px-2  font-mono sm:px-6 md:px-10 lg:px-12 flex-wrap text-secondary overflow-hidden  ${
+            font_size === "sm"
+              ? "text-md max-h-[6rem] gap-x-2"
+              : font_size === "md"
+              ? "text-xl max-h-[7.2rem] gap-x-2"
+              : font_size === "lg"
+              ? "text-2xl max-h-[8rem] gap-x-3"
+              : font_size === "xl"
+              ? "text-3xl max-h-[9rem] gap-x-4"
+              : "text-4xl max-h-[10rem] gap-x-5"
+          }`}
+        >
+          {words.map((word, index) => (
+            <div
+              key={index}
+              id="word"
+              style={{ transform: `translateY(-${pushOfset}rem)` }}
+              className={` relative  `}
+            >
+              {waitingForSpace && index === wordIndex && (
+                <span>
+                  <span
+                    className={`absolute  top-1/2 -translate-y-1/2 ${
+                      font_size === "sm"
+                        ? "h-3.5 w-1.5 -right-1.5"
+                        : font_size === "md"
+                        ? "h-8 w-2 -right-2"
+                        : font_size === "lg"
+                        ? "h-10 w-2.5 -right-2.5"
+                        : font_size === "xl"
+                        ? "h-12 w-3 -right-3"
+                        : "h-14 w-3.5 -right-4"
+                    } bg-secondary rounded-sm `}
+                  ></span>
                 </span>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-      <div className="flex gap-5 w-full justify-center items-center mt-15 relative">
-        {option === "time" ? (
-          <div className="text-secondary font-mono text-3xl flex flex-col gap-2 items-center absolute left-2 sm:left-6 md:left-10 lg:left-12 bottom-5">
-            <span>{(time / 1000).toFixed(2)}</span>
-            <span className="h-1 w-10 bg-secondary"></span>
-            <span>{count}</span>
-          </div>
-        ) : (
-          <div className="text-secondary font-mono text-3xl flex flex-col gap-2 items-center absolute left-2 sm:left-6 md:left-10 lg:left-12 bottom-5 ">
-            <span>{history.filter((item) => item.last === true).length}</span>
-            <span className="h-1 w-10 bg-secondary"></span>
-            <span>{count}</span>
-          </div>
-        )}
-        <RetryBtn handleReset={handleReset} />
-      </div>
-    </div>
+              )}
+              {Array.from(word).map((letter, i) => {
+                const historyItem = history.find(
+                  (item) => item.wordIndex === index && item.keyIndex === i
+                );
+
+                return (
+                  <span
+                    className={`letter ${
+                      historyItem
+                        ? historyItem.value
+                          ? "text-tertiary"
+                          : "text-red-600"
+                        : ""
+                    } ${
+                      index === wordIndex && i === keyIndex && !waitingForSpace
+                        ? "relative"
+                        : ""
+                    }`}
+                    key={i}
+                  >
+                    {index === wordIndex &&
+                      i === keyIndex &&
+                      !waitingForSpace && (
+                        <span
+                          id="cursor"
+                          className=" absolute -left-[1px] top-0 bottom-0 w-0.5 bg-primary animate-pulse"
+                        ></span>
+                      )}
+                    {letter}
+                  </span>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+        <div className="flex gap-5 w-full justify-center items-center mt-15 relative">
+          {option === "time" ? (
+            <div className="text-secondary font-mono text-3xl flex flex-col gap-2 items-center absolute left-2 sm:left-6 md:left-10 lg:left-12 bottom-5">
+              <span>{(time / 1000).toFixed(2)}</span>
+              <span className="h-1 w-10 bg-secondary"></span>
+              <span>{count}</span>
+            </div>
+          ) : (
+            <div className="text-secondary font-mono text-3xl flex flex-col gap-2 items-center absolute left-2 sm:left-6 md:left-10 lg:left-12 bottom-5 ">
+              <span>{history.filter((item) => item.last === true).length}</span>
+              <span className="h-1 w-10 bg-secondary"></span>
+              <span>{count}</span>
+            </div>
+          )}
+          <RetryBtn handleReset={handleReset} />
+        </div>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
